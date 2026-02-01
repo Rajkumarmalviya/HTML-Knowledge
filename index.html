@@ -192,7 +192,7 @@
         /* Main Layout */
         .main-layout {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 280px 1fr 280px;
             gap: 40px;
             margin-bottom: 80px;
         }
@@ -466,7 +466,7 @@
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            width: 22%;
+            width: 18%;
         }
 
         .stage-icon {
@@ -488,8 +488,8 @@
         .animation-connector {
             position: absolute;
             top: 40px;
-            left: 15%;
-            right: 15%;
+            left: 10%;
+            right: 10%;
             height: 3px;
             background-color: #e6eeff;
             z-index: 1;
@@ -501,7 +501,7 @@
             height: 3px;
             position: absolute;
             top: 40px;
-            left: 15%;
+            left: 10%;
             z-index: 1;
             transition: width 1s ease;
         }
@@ -509,7 +509,8 @@
         .animation-content {
             display: flex;
             gap: 30px;
-            align-items: center;
+            align-items: flex-start;
+            min-height: 400px;
         }
 
         .html-source, .dom-tree {
@@ -518,21 +519,26 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-            min-height: 300px;
+            min-height: 350px;
+            overflow-y: auto;
         }
 
         .html-source pre, .dom-tree pre {
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
             overflow-x: auto;
+            margin: 0;
         }
 
         .dom-node {
             padding: 5px 10px;
-            margin: 5px 0;
+            margin: 3px 0;
             border-radius: 4px;
             transition: all 0.5s ease;
             opacity: 0.5;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         .dom-node.active {
@@ -672,6 +678,54 @@
             color: var(--primary);
         }
 
+        /* Right Sidebar - Quick Reference */
+        .quick-ref {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .ref-item {
+            background-color: #f9f9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .ref-item h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ref-item p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tag-badge {
+            background-color: #e6eeff;
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-family: 'Fira Code', monospace;
+        }
+
         /* Footer */
         footer {
             background-color: var(--dark);
@@ -798,9 +852,13 @@
         }
 
         /* Responsive Design */
-        @media (max-width: 1100px) {
+        @media (max-width: 1200px) {
             .main-layout {
                 grid-template-columns: 250px 1fr;
+            }
+            
+            .quick-ref {
+                display: none;
             }
         }
 
@@ -869,6 +927,28 @@
             .form-row {
                 flex-direction: column;
             }
+            
+            .animation-stages {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stage {
+                width: 100%;
+                text-align: left;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .stage-icon {
+                margin-bottom: 0;
+                font-size: 1.5rem;
+            }
+            
+            .animation-connector, .animation-connector-active {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -889,10 +969,10 @@
                 <nav>
                     <ul id="mainNav">
                         <li><a href="#home" class="nav-active"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#html-intro"><i class="fas fa-info-circle"></i> HTML Basics</a></li>
                         <li><a href="#semantic"><i class="fas fa-code-branch"></i> Semantic HTML</a></li>
-                        <li><a href="#forms"><i class="fas fa-edit"></i> HTML Forms</a></li>
-                        <li><a href="#multimedia"><i class="fas fa-photo-video"></i> Multimedia</a></li>
-                        <li><a href="#advanced"><i class="fas fa-rocket"></i> Advanced</a></li>
+                        <li><a href="#forms"><i class="fas fa-edit"></i> Forms</a></li>
+                        <li><a href="#dom"><i class="fas fa-sitemap"></i> DOM</a></li>
                         <li><a href="#animation"><i class="fas fa-play-circle"></i> Browser Animation</a></li>
                     </ul>
                 </nav>
@@ -907,7 +987,7 @@
             <p>Your complete guide to learning HTML5 with interactive examples, detailed explanations, and comprehensive reference materials.</p>
             
             <div class="cta-buttons">
-                <a href="#semantic" class="btn btn-primary">
+                <a href="#html-intro" class="btn btn-primary">
                     <i class="fas fa-play-circle"></i> Start Learning
                 </a>
                 <a href="#animation" class="btn btn-secondary">
@@ -924,30 +1004,380 @@
             <aside class="sidebar">
                 <h3><i class="fas fa-list-ol"></i> Course Contents</h3>
                 <ul class="sidebar-nav">
-                    <li><a href="#semantic" class="active"><i class="fas fa-code-branch"></i> Semantic HTML</a></li>
+                    <li><a href="#html-intro" class="active"><i class="fas fa-info-circle"></i> What is HTML?</a></li>
+                    <li><a href="#html-history"><i class="fas fa-history"></i> HTML Evolution</a></li>
+                    <li><a href="#html-document"><i class="fas fa-file-code"></i> Document Structure</a></li>
+                    <li><a href="#element-types"><i class="fas fa-layer-group"></i> Element Types</a></li>
+                    <li><a href="#semantic"><i class="fas fa-code-branch"></i> Semantic HTML</a></li>
                     <li><a href="#forms"><i class="fas fa-edit"></i> HTML Forms</a></li>
-                    <li><a href="#multimedia"><i class="fas fa-photo-video"></i> Multimedia</a></li>
-                    <li><a href="#advanced"><i class="fas fa-rocket"></i> Advanced Concepts</a></li>
+                    <li><a href="#dom"><i class="fas fa-sitemap"></i> DOM Explained</a></li>
+                    <li><a href="#events"><i class="fas fa-bolt"></i> Event System</a></li>
                     <li><a href="#animation"><i class="fas fa-play-circle"></i> Browser Animation</a></li>
-                    <li><a href="#web-components"><i class="fas fa-cube"></i> Web Components</a></li>
-                    <li><a href="#accessibility"><i class="fas fa-universal-access"></i> Accessibility</a></li>
-                    <li><a href="#seo"><i class="fas fa-search"></i> HTML & SEO</a></li>
-                    <li><a href="#performance"><i class="fas fa-tachometer-alt"></i> Performance</a></li>
-                    <li><a href="#best-practices"><i class="fas fa-check-circle"></i> Best Practices</a></li>
+                    <li><a href="#multimedia"><i class="fas fa-photo-video"></i> Multimedia</a></li>
                 </ul>
                 
                 <h3 style="margin-top: 40px;"><i class="fas fa-tasks"></i> Practice Exercises</h3>
                 <ul class="sidebar-nav">
-                    <li><a href="#exercise-1"><i class="fas fa-pencil-alt"></i> Build Semantic Page</a></li>
-                    <li><a href="#exercise-2"><i class="fas fa-edit"></i> Create Contact Form</a></li>
-                    <li><a href="#exercise-3"><i class="fas fa-photo-video"></i> Add Media Gallery</a></li>
-                    <li><a href="#exercise-4"><i class="fas fa-table"></i> Advanced Table</a></li>
-                    <li><a href="#exercise-5"><i class="fas fa-code"></i> Custom Component</a></li>
+                    <li><a href="#exercise-1"><i class="fas fa-pencil-alt"></i> Build Basic Page</a></li>
+                    <li><a href="#exercise-2"><i class="fas fa-table"></i> Create Table</a></li>
+                    <li><a href="#exercise-3"><i class="fas fa-edit"></i> Design Form</a></li>
+                    <li><a href="#exercise-4"><i class="fas fa-photo-video"></i> Add Media</a></li>
+                    <li><a href="#exercise-5"><i class="fas fa-code"></i> Semantic Layout</a></li>
                 </ul>
             </aside>
 
             <!-- Main Content -->
             <main class="main-content">
+                <!-- Introduction to HTML -->
+                <section id="html-intro" class="content-section">
+                    <h2><i class="fas fa-info-circle"></i> What is HTML?</h2>
+                    
+                    <div class="definition">
+                        <h4><i class="fas fa-book"></i> Definition</h4>
+                        <p><strong>HTML (HyperText Markup Language)</strong> is the standard markup language for documents designed to be displayed in a web browser. It defines the structure and content of web pages.</p>
+                        
+                        <p><strong>Key Point:</strong> HTML is <em>not</em> a programming language. It's a markup language used to structure content on webpages.</p>
+                    </div>
+                    
+                    <div class="note-box">
+                        <h4><i class="fas fa-lightbulb"></i> Important Notes</h4>
+                        <ul>
+                            <li>HTML describes the structure of a web page semantically</li>
+                            <li>HTML elements are the building blocks of HTML pages</li>
+                            <li>HTML is not case-sensitive, but lowercase is the standard</li>
+                            <li>HTML5 is the latest version with new semantic elements and APIs</li>
+                        </ul>
+                    </div>
+                    
+                    <h3>HTML = "Hyper Text Markup Language"</h3>
+                    <p>HTML is not a Programming Language instead it's a Markup Language. It structures content on webpages.</p>
+                    
+                    <div class="interactive-demo">
+                        <div class="demo-header">
+                            <h4><i class="fas fa-laptop-code"></i> Interactive Example</h4>
+                            <button class="run-btn" onclick="runCode('demo1')">
+                                <i class="fas fa-play"></i> Run Code
+                            </button>
+                        </div>
+                        
+                        <div class="demo-container">
+                            <div class="demo-code">
+                                <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My First Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;Welcome to HTML!&lt;/h1&gt;
+&lt;p&gt;This is a paragraph.&lt;/p&gt;
+&lt;p&gt;This is another paragraph.&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                            </div>
+                            <div class="demo-output">
+                                <div class="output-display" id="demo1-output">
+                                    <!-- Output will appear here -->
+                                </div>
+                                <p>This is how the HTML code renders in a browser.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- HTML History -->
+                <section id="html-history" class="content-section">
+                    <h2><i class="fas fa-history"></i> HTML Evolution Timeline</h2>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">1991 - HTML 1.0</div>
+                            <div class="timeline-content">
+                                <h4>HTML 1.0 - The Beginning</h4>
+                                <p>The first version with basic elements like:</p>
+                                <div class="tag-list">
+                                    <span class="tag-badge">&lt;h1&gt; to &lt;h6&gt;</span>
+                                    <span class="tag-badge">&lt;p&gt;</span>
+                                    <span class="tag-badge">&lt;a&gt;</span>
+                                    <span class="tag-badge">&lt;ul&gt;, &lt;li&gt;</span>
+                                    <span class="tag-badge">&lt;pre&gt;</span>
+                                </div>
+                                <p>Simple structure for academic documents and research papers.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">1995 - HTML 2.0</div>
+                            <div class="timeline-content">
+                                <h4>HTML 2.0 - Interactive Pages</h4>
+                                <p>Added support for forms, making interactive web pages possible.</p>
+                                <div class="tag-list">
+                                    <span class="tag-badge">&lt;form&gt;</span>
+                                    <span class="tag-badge">&lt;input&gt;</span>
+                                    <span class="tag-badge">&lt;select&gt;</span>
+                                    <span class="tag-badge">&lt;textarea&gt;</span>
+                                </div>
+                                <p>Enabled user input, search forms, and basic interactivity.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">1997 - HTML 3.2 & 4.0</div>
+                            <div class="timeline-content">
+                                <h4>HTML 3.2 & 4.0 - Presentational HTML</h4>
+                                <p>Introduced presentational elements like &lt;font&gt; and &lt;center&gt;. Table-based layouts became popular.</p>
+                                <div class="tag-list">
+                                    <span class="tag-badge">&lt;font&gt;</span>
+                                    <span class="tag-badge">&lt;center&gt;</span>
+                                    <span class="tag-badge">&lt;table&gt;</span>
+                                </div>
+                                <p>This era saw mixing of structure with presentation, leading to messy code.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">2000 - XHTML & CSS</div>
+                            <div class="timeline-content">
+                                <h4>XHTML & CSS - Separation of Concerns</h4>
+                                <p>CSS was introduced to separate styling from HTML content. XHTML enforced stricter syntax rules.</p>
+                                <p><strong>CSS (1996 onward)</strong> was introduced to:</p>
+                                <ul>
+                                    <li>Move styling out of HTML</li>
+                                    <li>Restore HTML's original purpose (structure)</li>
+                                </ul>
+                                <p><strong>XHTML (2000)</strong> was HTML rewritten as strict XML. Very unforgiving and failed in practice (too rigid for real-world web).</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-year">2014 - HTML5</div>
+                            <div class="timeline-content">
+                                <h4>HTML5 - The Modern Standard</h4>
+                                <p>The modern standard with semantic elements, native multimedia, and powerful APIs.</p>
+                                <div class="tag-list">
+                                    <span class="tag-badge">&lt;header&gt;</span>
+                                    <span class="tag-badge">&lt;nav&gt;</span>
+                                    <span class="tag-badge">&lt;section&gt;</span>
+                                    <span class="tag-badge">&lt;article&gt;</span>
+                                    <span class="tag-badge">&lt;footer&gt;</span>
+                                    <span class="tag-badge">&lt;video&gt;</span>
+                                    <span class="tag-badge">&lt;audio&gt;</span>
+                                    <span class="tag-badge">&lt;canvas&gt;</span>
+                                </div>
+                                <p>HTML5 introduced semantic tags, native audio/video, canvas for graphics, better forms, and APIs for web apps.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- HTML Document Structure -->
+                <section id="html-document" class="content-section">
+                    <h2><i class="fas fa-file-code"></i> HTML Document Structure</h2>
+                    
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span>A Simple HTML Document</span>
+                            <button onclick="copyCode('code1')">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-body">
+                            <pre id="code1"><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+<span class="tag">&lt;title&gt;</span>Page Title<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+<span class="tag">&lt;h1&gt;</span>My First Heading<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;p&gt;</span>My first paragraph.<span class="tag">&lt;/p&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="note-box">
+                        <h4><i class="fas fa-info-circle"></i> Document Structure Explained</h4>
+                        <ul>
+                            <li><strong>The <code>&lt;!DOCTYPE html&gt;</code> declaration</strong> defines that this document is an HTML5 document</li>
+                            <li><strong>The <code>&lt;html&gt;</code> element</strong> is the root element of an HTML page</li>
+                            <li><strong>The <code>&lt;head&gt;</code> element</strong> contains meta information about the HTML page</li>
+                            <li><strong>The <code>&lt;title&gt;</code> element</strong> specifies a title for the HTML page (shown in browser's title bar)</li>
+                            <li><strong>The <code>&lt;body&gt;</code> element</strong> defines the document's body, containing all visible contents</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Element Types -->
+                <section id="element-types" class="content-section">
+                    <h2><i class="fas fa-layer-group"></i> HTML Element Types</h2>
+                    
+                    <div class="definition">
+                        <h4><i class="fas fa-book"></i> What is an HTML Element?</h4>
+                        <p>An HTML element is a structured unit of content defined by a tag, its attributes, and its content. HTML elements are classified in multiple ways. A real understanding comes from knowing all major classifications, not just one.</p>
+                    </div>
+                    
+                    <h3>1. By Structure: Paired vs Void Elements</h3>
+                    
+                    <div class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Examples</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Paired (Container) Elements</strong></td>
+                                <td>They have opening tag, closing tag, and content inside. Used when content must be wrapped or grouped.</td>
+                                <td><code>&lt;div&gt;&lt;/div&gt;</code>, <code>&lt;p&gt;&lt;/p&gt;</code>, <code>&lt;section&gt;&lt;/section&gt;</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Void (Self-Closing) Elements</strong></td>
+                                <td>Do not have closing tags, do not contain content. Represent standalone resources or actions.</td>
+                                <td><code>&lt;img&gt;</code>, <code>&lt;br&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;meta&gt;</code></td>
+                            </tr>
+                        </tbody>
+                    </div>
+                    
+                    <h3>2. By Display Behavior: Block vs Inline</h3>
+                    
+                    <div class="interactive-demo">
+                        <div class="demo-header">
+                            <h4><i class="fas fa-eye"></i> Block vs Inline Visualization</h4>
+                            <button class="run-btn" onclick="runCode('demo2')">
+                                <i class="fas fa-play"></i> Run Demo
+                            </button>
+                        </div>
+                        
+                        <div class="demo-container">
+                            <div class="demo-code">
+                                <pre><code>&lt;!-- Block elements --&gt;
+&lt;div style="background: lightblue;"&gt;Block Element 1&lt;/div&gt;
+&lt;p style="background: lightgreen;"&gt;Block Element 2&lt;/p&gt;
+
+&lt;!-- Inline elements --&gt;
+&lt;span style="background: lightcoral;"&gt;Inline 1&lt;/span&gt;
+&lt;a href="#" style="background: lightyellow;"&gt;Inline 2&lt;/a&gt;
+&lt;strong style="background: lightpink;"&gt;Inline 3&lt;/strong&gt;</code></pre>
+                            </div>
+                            <div class="demo-output">
+                                <div class="output-display" id="demo2-output"></div>
+                                <p><strong>Block elements</strong> start on a new line and take full width.<br>
+                                <strong>Inline elements</strong> stay in line with text.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Characteristics</th>
+                                <th>Examples</th>
+                                <th>Use</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Block-Level Elements</strong></td>
+                                <td>Start on a new line, take full available width, can contain other block and inline elements</td>
+                                <td><code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code></td>
+                                <td>Used for layout and structure</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Inline Elements</strong></td>
+                                <td>Do not start on a new line, only take as much width as needed, usually contain text or other inline elements</td>
+                                <td><code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code></td>
+                                <td>Used for text-level meaning</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>3. By Meaning: Semantic vs Non-Semantic</h3>
+                    
+                    <div class="note-box">
+                        <h4><i class="fas fa-star"></i> Professional Tip</h4>
+                        <p>Always prefer semantic elements when possible. They improve accessibility, SEO, and code maintainability.</p>
+                    </div>
+                    
+                    <div class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Semantic Elements</th>
+                                <th>Non-Semantic Elements</th>
+                                <th>When to Use Non-Semantic</th>
+                                <th>Benefits of Semantic</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code></td>
+                                <td><code>&lt;div&gt;</code>, <code>&lt;span&gt;</code></td>
+                                <td>When no semantic element fits, pure grouping is needed</td>
+                                <td>Accessibility, SEO, Readability, Maintainability</td>
+                            </tr>
+                            <tr>
+                                <td><code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;footer&gt;</code></td>
+                                <td></td>
+                                <td>Overuse is a beginner mistake</td>
+                                <td>Professionals strongly prefer semantic elements</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>4. By Content Model (What They Can Contain)</h3>
+                    <p>HTML defines rules for what elements may contain. Common categories:</p>
+                    <ul>
+                        <li><strong>Metadata elements:</strong> <code>&lt;title&gt;</code>, <code>&lt;meta&gt;</code>, <code>&lt;link&gt;</code></li>
+                        <li><strong>Flow content:</strong> Most visible elements (<code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;section&gt;</code>)</li>
+                        <li><strong>Phrasing content:</strong> Text-level elements (<code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code>)</li>
+                        <li><strong>Embedded content:</strong> <code>&lt;img&gt;</code>, <code>&lt;video&gt;</code>, <code>&lt;iframe&gt;</code></li>
+                    </ul>
+                    <p>This prevents invalid HTML.</p>
+                    
+                    <h3>5. By Function: Specialized Element Types</h3>
+                    <div class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Function</th>
+                                <th>Examples</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Text Content Elements</td>
+                                <td><code>&lt;p&gt;</code>, <code>&lt;h1&gt;-&lt;h6&gt;</code>, <code>&lt;blockquote&gt;</code></td>
+                                <td>Display and structure text content</td>
+                            </tr>
+                            <tr>
+                                <td>Grouping Elements</td>
+                                <td><code>&lt;div&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code></td>
+                                <td>Group related content together</td>
+                            </tr>
+                            <tr>
+                                <td>Interactive Elements</td>
+                                <td><code>&lt;button&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;select&gt;</code></td>
+                                <td>Enable user interaction</td>
+                            </tr>
+                            <tr>
+                                <td>Media Elements</td>
+                                <td><code>&lt;img&gt;</code>, <code>&lt;video&gt;</code>, <code>&lt;audio&gt;</code></td>
+                                <td>Embed multimedia content</td>
+                            </tr>
+                            <tr>
+                                <td>Custom & Web Components</td>
+                                <td><code>&lt;my-component&gt;&lt;/my-component&gt;</code></td>
+                                <td>Modern HTML allows custom elements powered by JavaScript</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
                 <!-- Semantic HTML -->
                 <section id="semantic" class="content-section">
                     <h2><i class="fas fa-code-branch"></i> Semantic HTML</h2>
@@ -972,12 +1402,12 @@
                     <div class="code-example">
                         <div class="code-header">
                             <span>semantic-layout.html</span>
-                            <button onclick="copyCode('code1')">
+                            <button onclick="copyCode('code2')">
                                 <i class="far fa-copy"></i> Copy
                             </button>
                         </div>
                         <div class="code-body">
-                            <pre id="code1"><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+                            <pre id="code2"><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
 <span class="tag">&lt;html&gt;</span>
 <span class="tag">&lt;head&gt;</span>
     <span class="tag">&lt;title&gt;</span>Semantic HTML Example<span class="tag">&lt;/title&gt;</span>
@@ -1076,78 +1506,8 @@
                                 <td>Footer for its nearest section</td>
                                 <td>Page footer, article footer, section footer</td>
                             </tr>
-                            <tr>
-                                <td><code>&lt;figure&gt; & &lt;figcaption&gt;</code></td>
-                                <td>Self-contained content with caption</td>
-                                <td>Images, diagrams, code snippets with descriptions</td>
-                            </tr>
-                            <tr>
-                                <td><code>&lt;time&gt;</code></td>
-                                <td>Machine-readable date/time</td>
-                                <td>Publication dates, event dates</td>
-                            </tr>
-                            <tr>
-                                <td><code>&lt;mark&gt;</code></td>
-                                <td>Highlighted text for reference</td>
-                                <td>Search results, important excerpts</td>
-                            </tr>
                         </tbody>
                     </table>
-                    
-                    <div class="interactive-demo">
-                        <div class="demo-header">
-                            <h4><i class="fas fa-laptop-code"></i> Semantic vs Non-Semantic Comparison</h4>
-                            <button class="run-btn" onclick="runSemanticDemo()">
-                                <i class="fas fa-play"></i> Run Demo
-                            </button>
-                        </div>
-                        
-                        <div class="demo-container">
-                            <div class="demo-code">
-                                <h5>Non-Semantic (Bad Practice)</h5>
-                                <pre><code>&lt;div id="header"&gt;
-  &lt;div class="title"&gt;My Site&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div id="nav"&gt;
-  &lt;div class="menu"&gt;...&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="main-content"&gt;
-  &lt;div class="post"&gt;
-    &lt;div class="post-title"&gt;...&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div id="footer"&gt;
-  &lt;div class="copyright"&gt;...&lt;/div&gt;
-&lt;/div&gt;</code></pre>
-                            </div>
-                            <div class="demo-code">
-                                <h5>Semantic (Good Practice)</h5>
-                                <pre><code>&lt;header&gt;
-  &lt;h1&gt;My Site&lt;/h1&gt;
-&lt;/header&gt;
-
-&lt;nav&gt;
-  &lt;ul&gt;...&lt;/ul&gt;
-&lt;/nav&gt;
-
-&lt;main&gt;
-  &lt;article&gt;
-    &lt;h2&gt;...&lt;/h2&gt;
-  &lt;/article&gt;
-&lt;/main&gt;
-
-&lt;footer&gt;
-  &lt;p&gt;...&lt;/p&gt;
-&lt;/footer&gt;</code></pre>
-                            </div>
-                        </div>
-                        <div class="output-display" id="semantic-output">
-                            <p>The semantic version clearly communicates structure to browsers, screen readers, and search engines.</p>
-                        </div>
-                    </div>
                 </section>
 
                 <!-- HTML Forms -->
@@ -1164,12 +1524,12 @@
                     <div class="code-example">
                         <div class="code-header">
                             <span>contact-form.html</span>
-                            <button onclick="copyCode('code2')">
+                            <button onclick="copyCode('code3')">
                                 <i class="far fa-copy"></i> Copy
                             </button>
                         </div>
                         <div class="code-body">
-                            <pre id="code2"><code><span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="value">"/submit-form"</span> <span class="attr">method</span>=<span class="value">"POST"</span><span class="tag">&gt;</span>
+                            <pre id="code3"><code><span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="value">"/submit-form"</span> <span class="attr">method</span>=<span class="value">"POST"</span><span class="tag">&gt;</span>
     
     <span class="comment">&lt;!-- Text input --&gt;</span>
     <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="value">"form-group"</span><span class="tag">&gt;</span>
@@ -1199,22 +1559,6 @@
         <span class="tag">&lt;/select&gt;</span>
     <span class="tag">&lt;/div&gt;</span>
 
-    <span class="comment">&lt;!-- Radio buttons --&gt;</span>
-    <span class="tag">&lt;fieldset&gt;</span>
-        <span class="tag">&lt;legend&gt;</span>Gender:<span class="tag">&lt;/legend&gt;</span>
-        <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"radio"</span> <span class="attr">id</span>=<span class="value">"male"</span> <span class="attr">name</span>=<span class="value">"gender"</span> <span class="attr">value</span>=<span class="value">"male"</span><span class="tag">&gt;</span>
-        <span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"male"</span><span class="tag">&gt;</span>Male<span class="tag">&lt;/label&gt;</span><span class="tag">&lt;br&gt;</span>
-        
-        <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"radio"</span> <span class="attr">id</span>=<span class="value">"female"</span> <span class="attr">name</span>=<span class="value">"gender"</span> <span class="attr">value</span>=<span class="value">"female"</span><span class="tag">&gt;</span>
-        <span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"female"</span><span class="tag">&gt;</span>Female<span class="tag">&lt;/label&gt;</span>
-    <span class="tag">&lt;/fieldset&gt;</span>
-
-    <span class="comment">&lt;!-- Textarea --&gt;</span>
-    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="value">"form-group"</span><span class="tag">&gt;</span>
-        <span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"message"</span><span class="tag">&gt;</span>Message:<span class="tag">&lt;/label&gt;</span>
-        <span class="tag">&lt;textarea</span> <span class="attr">id</span>=<span class="value">"message"</span> <span class="attr">name</span>=<span class="value">"message"</span> <span class="attr">rows</span>=<span class="value">"4"</span><span class="tag">&gt;</span><span class="tag">&lt;/textarea&gt;</span>
-    <span class="tag">&lt;/div&gt;</span>
-
     <span class="comment">&lt;!-- Submit button --&gt;</span>
     <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="value">"submit"</span><span class="tag">&gt;</span>Submit<span class="tag">&lt;/button&gt;</span>
     <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="value">"reset"</span><span class="tag">&gt;</span>Reset<span class="tag">&lt;/button&gt;</span>
@@ -1222,8 +1566,6 @@
 <span class="tag">&lt;/form&gt;</span></code></pre>
                         </div>
                     </div>
-                    
-                    <h3>Form Demo</h3>
                     
                     <div class="form-demo">
                         <form id="demoForm" onsubmit="event.preventDefault(); handleFormSubmit();">
@@ -1307,329 +1649,306 @@
                             <pre id="form-data"></pre>
                         </div>
                     </div>
-                    
-                    <h3>Form Validation & Attributes</h3>
-                    
-                    <div class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Attribute</th>
-                                <th>Purpose</th>
-                                <th>Example</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>required</code></td>
-                                <td>Makes field mandatory</td>
-                                <td><code>&lt;input required&gt;</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>pattern</code></td>
-                                <td>Validates against regex</td>
-                                <td><code>pattern="[A-Za-z]{3}"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>minlength, maxlength</code></td>
-                                <td>Sets text length limits</td>
-                                <td><code>minlength="5" maxlength="50"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>min, max</code></td>
-                                <td>Sets numeric limits</td>
-                                <td><code>min="0" max="100"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>placeholder</code></td>
-                                <td>Shows example text</td>
-                                <td><code>placeholder="Enter email"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>autocomplete</code></td>
-                                <td>Enables/disables autofill</td>
-                                <td><code>autocomplete="off"</code></td>
-                            </tr>
-                            <tr>
-                                <td><code>readonly, disabled</code></td>
-                                <td>Controls user interaction</td>
-                                <td><code>readonly</code> or <code>disabled</code></td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </section>
 
-                <!-- Multimedia -->
-                <section id="multimedia" class="content-section">
-                    <h2><i class="fas fa-photo-video"></i> HTML Multimedia</h2>
+                <!-- DOM Explained -->
+                <section id="dom" class="content-section">
+                    <h2><i class="fas fa-sitemap"></i> DOM (Document Object Model)</h2>
                     
                     <div class="definition">
-                        <h4><i class="fas fa-book"></i> What is Multimedia in HTML?</h4>
-                        <p><strong>HTML Multimedia</strong> refers to integrating various media types like images, audio, video, and vector graphics into web pages. HTML5 introduced native support for audio and video without requiring plugins like Flash.</p>
+                        <h4><i class="fas fa-brain"></i> The Big Idea</h4>
+                        <p><strong>HTML is text → DOM is objects in memory → Elements become nodes</strong></p>
+                        <p>When the browser parses HTML, every element becomes a DOM node with properties, methods, and relationships.</p>
                     </div>
                     
-                    <h3>Images</h3>
+                    <h3>How HTML Maps to DOM</h3>
                     
                     <div class="code-example">
                         <div class="code-header">
-                            <span>image-examples.html</span>
-                            <button onclick="copyCode('code3')">
-                                <i class="far fa-copy"></i> Copy
-                            </button>
-                        </div>
-                        <div class="code-body">
-                            <pre id="code3"><code><span class="comment">&lt;!-- Basic image --&gt;</span>
-<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"Description of photo"</span><span class="tag">&gt;</span>
-
-<span class="comment">&lt;!-- Responsive image with srcset --&gt;</span>
-<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"image-small.jpg"</span>
-     <span class="attr">srcset</span>=<span class="value">"image-small.jpg 480w,
-             image-medium.jpg 800w,
-             image-large.jpg 1200w"</span>
-     <span class="attr">sizes</span>=<span class="value">"(max-width: 600px) 480px,
-            (max-width: 1000px) 800px,
-            1200px"</span>
-     <span class="attr">alt</span>=<span class="value">"Responsive image"</span><span class="tag">&gt;</span>
-
-<span class="comment">&lt;!-- Figure with caption --&gt;</span>
-<span class="tag">&lt;figure&gt;</span>
-    <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"chart.png"</span> <span class="attr">alt</span>=<span class="value">"Sales chart for 2023"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;figcaption&gt;</span>Figure 1: Quarterly sales data for 2023<span class="tag">&lt;/figcaption&gt;</span>
-<span class="tag">&lt;/figure&gt;</span>
-
-<span class="comment">&lt;!-- Picture element for art direction --&gt;</span>
-<span class="tag">&lt;picture&gt;</span>
-    <span class="tag">&lt;source</span> <span class="attr">media</span>=<span class="value">"(min-width: 1200px)"</span> <span class="attr">srcset</span>=<span class="value">"large.jpg"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;source</span> <span class="attr">media</span>=<span class="value">"(min-width: 800px)"</span> <span class="attr">srcset</span>=<span class="value">"medium.jpg"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"small.jpg"</span> <span class="attr">alt</span>=<span class="value">"Responsive image"</span><span class="tag">&gt;</span>
-<span class="tag">&lt;/picture&gt;</span></code></pre>
-                        </div>
-                    </div>
-                    
-                    <h3>Audio & Video</h3>
-                    
-                    <div class="media-demo">
-                        <div class="media-item">
-                            <h4>Audio Player</h4>
-                            <audio controls style="width: 100%; margin: 10px 0;">
-                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <p>HTML5 audio player with controls.</p>
-                        </div>
-                        
-                        <div class="media-item">
-                            <h4>Video Player</h4>
-                            <video controls style="width: 100%; margin: 10px 0;" poster="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80">
-                                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                            <p>HTML5 video player with poster image.</p>
-                        </div>
-                        
-                        <div class="media-item">
-                            <h4>SVG Graphics</h4>
-                            <svg width="200" height="200" style="margin: 10px 0;">
-                                <rect x="50" y="50" width="100" height="100" fill="#3a86ff" opacity="0.7" />
-                                <circle cx="100" cy="100" r="40" fill="#ff006e" opacity="0.7" />
-                                <text x="100" y="190" text-anchor="middle" fill="#333" font-family="Arial" font-size="14">SVG Example</text>
-                            </svg>
-                            <p>Scalable Vector Graphics (SVG) example.</p>
-                        </div>
-                        
-                        <div class="media-item">
-                            <h4>Canvas</h4>
-                            <canvas id="demoCanvas" width="200" height="200" style="border: 1px solid #ddd; margin: 10px 0;"></canvas>
-                            <p>HTML Canvas for dynamic graphics.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="code-example">
-                        <div class="code-header">
-                            <span>audio-video.html</span>
+                            <span>html-to-dom.html</span>
                             <button onclick="copyCode('code4')">
                                 <i class="far fa-copy"></i> Copy
                             </button>
                         </div>
                         <div class="code-body">
-                            <pre id="code4"><code><span class="comment">&lt;!-- Audio with multiple sources --&gt;</span>
-<span class="tag">&lt;audio</span> <span class="attr">controls</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"audio.mp3"</span> <span class="attr">type</span>=<span class="value">"audio/mpeg"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"audio.ogg"</span> <span class="attr">type</span>=<span class="value">"audio/ogg"</span><span class="tag">&gt;</span>
-    Your browser does not support the audio element.
-<span class="tag">&lt;/audio&gt;</span>
-
-<span class="comment">&lt;!-- Video with multiple tracks --&gt;</span>
-<span class="tag">&lt;video</span> <span class="attr">controls</span> <span class="attr">width</span>=<span class="value">"640"</span> <span class="attr">height</span>=<span class="value">"360"</span> <span class="attr">poster</span>=<span class="value">"preview.jpg"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"video.mp4"</span> <span class="attr">type</span>=<span class="value">"video/mp4"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"video.webm"</span> <span class="attr">type</span>=<span class="value">"video/webm"</span><span class="tag">&gt;</span>
-    
-    <span class="comment">&lt;!-- Subtitles/captions --&gt;</span>
-    <span class="tag">&lt;track</span> <span class="attr">kind</span>=<span class="value">"subtitles"</span> <span class="attr">src</span>=<span class="value">"subtitles_en.vtt"</span> <span class="attr">srclang</span>=<span class="value">"en"</span> <span class="attr">label</span>=<span class="value">"English"</span><span class="tag">&gt;</span>
-    <span class="tag">&lt;track</span> <span class="attr">kind</span>=<span class="value">"captions"</span> <span class="attr">src</span>=<span class="value">"captions_en.vtt"</span> <span class="attr">srclang</span>=<span class="value">"en"</span> <span class="attr">label</span>=<span class="value">"English"</span><span class="tag">&gt;</span>
-    
-    Your browser does not support the video tag.
-<span class="tag">&lt;/video&gt;</span></code></pre>
+                            <pre id="code4"><code><span class="comment">&lt;!-- HTML Source --&gt;</span>
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+    <span class="tag">&lt;title&gt;</span>Demo<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>Hello<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Welcome <span class="tag">&lt;strong&gt;</span>user<span class="tag">&lt;/strong&gt;</span><span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
                         </div>
+                    </div>
+                    
+                    <div class="note-box">
+                        <h4><i class="fas fa-project-diagram"></i> DOM Tree Structure</h4>
+                        <pre style="background: #f0f4ff; padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace;">
+Document
+ ├── DocumentType (html)
+ ├── html (Element)
+     ├── head (Element)
+     │   └── title (Element)
+     │       └── "Demo" (Text)
+     └── body (Element)
+         ├── h1 (Element)
+         │   └── "Hello" (Text)
+         └── p (Element)
+             ├── "Welcome " (Text)
+             └── strong (Element)
+                 └── "user" (Text)</pre>
+                        <p>Every box is a DOM node. Text becomes separate text nodes.</p>
+                    </div>
+                    
+                    <h3>Types of DOM Nodes</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Node Type</th>
+                                <th>Created From</th>
+                                <th>Example</th>
+                                <th>JavaScript Interface</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Document Node</td>
+                                <td>The document itself</td>
+                                <td><code>document</code></td>
+                                <td>Root of everything, entry point for JavaScript</td>
+                            </tr>
+                            <tr>
+                                <td>Element Nodes</td>
+                                <td>HTML elements</td>
+                                <td><code>HTMLParagraphElement</code>, <code>HTMLDivElement</code></td>
+                                <td><code>document.body instanceof HTMLElement // true</code></td>
+                            </tr>
+                            <tr>
+                                <td>Text Nodes</td>
+                                <td>Text inside elements</td>
+                                <td><code>"Hello"</code> inside <code>&lt;p&gt;</code></td>
+                                <td>Text is manipulable independently of elements</td>
+                            </tr>
+                            <tr>
+                                <td>Attribute Nodes</td>
+                                <td>Element attributes</td>
+                                <td><code>src</code>, <code>alt</code> on <code>&lt;img&gt;</code></td>
+                                <td>Attributes become properties on elements</td>
+                            </tr>
+                            <tr>
+                                <td>Comment Nodes</td>
+                                <td>HTML comments</td>
+                                <td><code>&lt;!-- note --&gt;</code></td>
+                                <td>Browsers preserve them as Comment nodes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>How an HTML Element Maps to a DOM Object</h3>
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span>element-to-object.js</span>
+                        </div>
+                        <div class="code-body">
+                            <pre><code><span class="comment">// HTML: &lt;button id="save"&gt;Save&lt;/button&gt;</span>
+<span class="comment">// Becomes DOM Object:</span>
+{
+  nodeType: 1,
+  nodeName: "BUTTON",
+  id: "save",
+  textContent: "Save",
+  childNodes: [TextNode],
+  parentNode: body,
+  <span class="comment">// ... many other properties and methods</span>
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h3>Element Interfaces (Advanced but Important)</h3>
+                    <p>Different elements map to different interfaces:</p>
+                    <div class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>HTML Element</th>
+                                <th>DOM Interface</th>
+                                <th>Specialized Properties</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>&lt;div&gt;</code></td>
+                                <td><code>HTMLDivElement</code></td>
+                                <td>Standard element properties</td>
+                            </tr>
+                            <tr>
+                                <td><code>&lt;p&gt;</code></td>
+                                <td><code>HTMLParagraphElement</code></td>
+                                <td>Text formatting properties</td>
+                            </tr>
+                            <tr>
+                                <td><code>&lt;a&gt;</code></td>
+                                <td><code>HTMLAnchorElement</code></td>
+                                <td><code>href</code>, <code>target</code>, <code>download</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>&lt;input&gt;</code></td>
+                                <td><code>HTMLInputElement</code></td>
+                                <td><code>value</code>, <code>type</code>, <code>checked</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>DOM Relationships (Tree Navigation)</h3>
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span>dom-relationships.html</span>
+                        </div>
+                        <div class="code-body">
+                            <pre><code><span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span>One<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Two<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="comment">// DOM Relationships:</span>
+<span class="comment">// ul → parent</span>
+<span class="comment">// li → children</span>
+<span class="comment">// li → siblings</span>
+
+<span class="comment">// JavaScript reflects this exactly:</span>
+ul.children        <span class="comment">// HTMLCollection of li elements</span>
+li.parentElement   <span class="comment">// ul element</span>
+li.nextElementSibling <span class="comment">// next li element</span></code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="note-box">
+                        <h4><i class="fas fa-lightbulb"></i> Why This Knowledge Makes You Better</h4>
+                        <p>Understanding DOM helps you:</p>
+                        <ul>
+                            <li>Avoid layout bugs</li>
+                            <li>Understand React/Vue warnings</li>
+                            <li>Debug rendering issues</li>
+                            <li>Write efficient UI code</li>
+                        </ul>
                     </div>
                 </section>
 
-                <!-- Advanced Concepts -->
-                <section id="advanced" class="content-section">
-                    <h2><i class="fas fa-rocket"></i> Advanced HTML Concepts</h2>
+                <!-- Event System -->
+                <section id="events" class="content-section">
+                    <h2><i class="fas fa-bolt"></i> DOM Event System</h2>
                     
                     <div class="definition">
-                        <h4><i class="fas fa-book"></i> Beyond Basic HTML</h4>
-                        <p><strong>Advanced HTML</strong> includes features that go beyond basic page structure, enabling rich web applications, better user experiences, and integration with modern web technologies.</p>
+                        <h4><i class="fas fa-bullhorn"></i> What is a DOM Event?</h4>
+                        <p>An event is a browser signal that something has happened (click, keypress, submit, scroll, load, etc.). Event listeners are JavaScript functions that respond to these events.</p>
                     </div>
                     
-                    <h3>Web Components & Custom Elements</h3>
+                    <h3>Event Propagation: Bubbling & Capturing</h3>
+                    
+                    <div class="interactive-demo">
+                        <div class="demo-header">
+                            <h4><i class="fas fa-mouse-pointer"></i> Event Bubbling Demo</h4>
+                            <button class="run-btn" onclick="runBubblingDemo()">
+                                <i class="fas fa-play"></i> Run Demo
+                            </button>
+                        </div>
+                        
+                        <div class="demo-output">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                                <div id="grandparent" style="background: lightblue; padding: 30px; text-align: center; border-radius: 10px; cursor: pointer;">
+                                    <strong>Grandparent (click me)</strong>
+                                    <div id="parent" style="background: lightgreen; padding: 25px; margin: 20px; border-radius: 10px; cursor: pointer;">
+                                        <strong>Parent (click me)</strong>
+                                        <div id="child" style="background: lightcoral; padding: 20px; margin: 15px; border-radius: 10px; cursor: pointer;">
+                                            <strong>Child (click me)</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="event-log" style="background: #f8f9fa; padding: 15px; border-radius: 8px; width: 100%; min-height: 80px; font-family: 'Fira Code', monospace; font-size: 0.9rem;">
+                                    Event log will appear here...
+                                </div>
+                            </div>
+                            <p>Click on the child element and see how events bubble up through parent elements.</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Event Delegation (Professional Technique)</h3>
+                    
+                    <div class="note-box">
+                        <h4><i class="fas fa-magic"></i> Why Use Event Delegation?</h4>
+                        <p>Instead of adding event listeners to every child element, add one to a parent and use event bubbling to handle events efficiently.</p>
+                    </div>
                     
                     <div class="code-example">
                         <div class="code-header">
-                            <span>custom-element.js</span>
+                            <span>event-delegation.js</span>
                             <button onclick="copyCode('code5')">
                                 <i class="far fa-copy"></i> Copy
                             </button>
                         </div>
                         <div class="code-body">
-                            <pre id="code5"><code><span class="comment">// Define a custom element</span>
-<span class="tag">class</span> UserCard <span class="tag">extends</span> HTMLElement {
-    <span class="tag">constructor</span>() {
-        <span class="tag">super</span>();
-        
-        <span class="comment">// Create shadow DOM</span>
-        <span class="tag">const</span> shadow = <span class="tag">this</span>.attachShadow({mode: <span class="value">'open'</span>});
-        
-        <span class="comment">// Create template</span>
-        <span class="tag">const</span> template = document.createElement(<span class="value">'template'</span>);
-        template.innerHTML = `
-            &lt;style&gt;
-                .user-card {
-                    border: 1px solid #ccc;
-                    border-radius: 8px;
-                    padding: 20px;
-                    max-width: 300px;
-                    font-family: Arial, sans-serif;
-                }
-                .name {
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                    color: #333;
-                }
-                .email {
-                    color: #666;
-                    margin: 10px 0;
-                }
-            &lt;/style&gt;
-            &lt;div class="user-card"&gt;
-                &lt;div class="name"&gt;&lt;slot name="name"&gt;Unknown&lt;/slot&gt;&lt;/div&gt;
-                &lt;div class="email"&gt;&lt;slot name="email"&gt;No email&lt;/slot&gt;&lt;/div&gt;
-            &lt;/div&gt;
-        `;
-        
-        shadow.appendChild(template.content.cloneNode(<span class="tag">true</span>));
+                            <pre id="code5"><code><span class="comment">// Instead of this (inefficient):</span>
+document.querySelectorAll(<span class="value">'.item'</span>).forEach(item => {
+    item.addEventListener(<span class="value">'click'</span>, handleClick);
+});
+
+<span class="comment">// Do this (event delegation):</span>
+document.querySelector(<span class="value">'.list'</span>).addEventListener(<span class="value">'click'</span>, (e) => {
+    <span class="comment">// Check if clicked element is an item</span>
+    <span class="tag">if</span> (e.target.classList.contains(<span class="value">'item'</span>)) {
+        handleClick(e);
     }
-}
-
-<span class="comment">// Register the custom element</span>
-customElements.define(<span class="value">'user-card'</span>, UserCard);</code></pre>
+});</code></pre>
                         </div>
                     </div>
                     
-                    <div class="code-example">
-                        <div class="code-header">
-                            <span>using-custom-element.html</span>
-                        </div>
-                        <div class="code-body">
-                            <pre><code><span class="comment">&lt;!-- Using the custom element --&gt;</span>
-<span class="tag">&lt;user-card&gt;</span>
-    <span class="tag">&lt;span</span> <span class="attr">slot</span>=<span class="value">"name"</span><span class="tag">&gt;</span>John Doe<span class="tag">&lt;/span&gt;</span>
-    <span class="tag">&lt;span</span> <span class="attr">slot</span>=<span class="value">"email"</span><span class="tag">&gt;</span>john@example.com<span class="tag">&lt;/span&gt;</span>
-<span class="tag">&lt;/user-card&gt;</span>
-
-<span class="tag">&lt;user-card&gt;</span>
-    <span class="tag">&lt;span</span> <span class="attr">slot</span>=<span class="value">"name"</span><span class="tag">&gt;</span>Jane Smith<span class="tag">&lt;/span&gt;</span>
-    <span class="tag">&lt;span</span> <span class="attr">slot</span>=<span class="value">"email"</span><span class="tag">&gt;</span>jane@example.com<span class="tag">&lt;/span&gt;</span>
-<span class="tag">&lt;/user-card&gt;</span></code></pre>
-                        </div>
-                    </div>
-                    
-                    <h3>Data Attributes & Microdata</h3>
-                    
-                    <div class="note-box">
-                        <h4><i class="fas fa-database"></i> Data Attributes</h4>
-                        <p>Custom data attributes (<code>data-*</code>) allow you to store extra information on HTML elements that can be accessed via JavaScript.</p>
-                    </div>
-                    
-                    <div class="code-example">
-                        <div class="code-header">
-                            <span>data-attributes.html</span>
-                            <button onclick="copyCode('code6')">
-                                <i class="far fa-copy"></i> Copy
-                            </button>
-                        </div>
-                        <div class="code-body">
-                            <pre id="code6"><code><span class="comment">&lt;!-- Storing data in HTML elements --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="value">"product"</span>
-     <span class="attr">data-product-id</span>=<span class="value">"12345"</span>
-     <span class="attr">data-price</span>=<span class="value">"29.99"</span>
-     <span class="attr">data-category</span>=<span class="value">"electronics"</span><span class="tag">&gt;</span>
-    Product Name
-<span class="tag">&lt;/div&gt;</span>
-
-<span class="comment">&lt;!-- Accessing data in JavaScript --&gt;</span>
-<span class="tag">&lt;script&gt;</span>
-    <span class="tag">const</span> product = document.getElementById(<span class="value">'product'</span>);
-    <span class="tag">const</span> productId = product.dataset.productId; <span class="comment">// "12345"</span>
-    <span class="tag">const</span> price = product.dataset.price; <span class="comment">// "29.99"</span>
-    <span class="tag">const</span> category = product.dataset.category; <span class="comment">// "electronics"</span>
-<span class="tag">&lt;/script&gt;</span></code></pre>
-                        </div>
-                    </div>
-                    
-                    <h3>HTML APIs</h3>
-                    
+                    <h3>Event Properties & Methods</h3>
                     <div class="comparison-table">
                         <thead>
                             <tr>
-                                <th>API</th>
-                                <th>Purpose</th>
-                                <th>HTML Element/Attribute</th>
+                                <th>Property/Method</th>
+                                <th>Description</th>
+                                <th>Example</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Geolocation API</td>
-                                <td>Get user's geographical location</td>
-                                <td>JavaScript API (not HTML-specific)</td>
+                                <td><code>event.target</code></td>
+                                <td>The element that triggered the event</td>
+                                <td>The button that was clicked</td>
                             </tr>
                             <tr>
-                                <td>Drag & Drop API</td>
-                                <td>Make elements draggable</td>
-                                <td><code>draggable="true"</code></td>
+                                <td><code>event.currentTarget</code></td>
+                                <td>The element with the event listener</td>
+                                <td>The parent with the click handler</td>
                             </tr>
                             <tr>
-                                <td>Web Storage API</td>
-                                <td>Store data locally in browser</td>
-                                <td>JavaScript API</td>
+                                <td><code>event.stopPropagation()</code></td>
+                                <td>Stops event from bubbling up</td>
+                                <td>Prevents parent handlers from firing</td>
                             </tr>
                             <tr>
-                                <td>Canvas API</td>
-                                <td>Draw graphics dynamically</td>
-                                <td><code>&lt;canvas&gt;</code></td>
-                            </tr>
-                            <tr>
-                                <td>Web Workers API</td>
-                                <td>Run scripts in background</td>
-                                <td>JavaScript API</td>
-                            </tr>
-                            <tr>
-                                <td>History API</td>
-                                <td>Manipulate browser history</td>
-                                <td>JavaScript API</td>
+                                <td><code>event.preventDefault()</code></td>
+                                <td>Prevents default browser action</td>
+                                <td>Stops form submission or link navigation</td>
                             </tr>
                         </tbody>
                     </table>
+                    
+                    <div class="note-box">
+                        <h4><i class="fas fa-question-circle"></i> Why Event Bubbling Exists</h4>
+                        <p>Socho: Browser ko har element track karna pade, memory heavy ho jata. Bubbling allows:</p>
+                        <ul>
+                            <li>Efficient event handling</li>
+                            <li>Event delegation</li>
+                            <li>Predictable behavior</li>
+                        </ul>
+                        <p>It's a feature, not a bug!</p>
+                    </div>
                 </section>
 
                 <!-- Browser Animation -->
@@ -1788,19 +2107,167 @@ customElements.define(<span class="value">'user-card'</span>, UserCard);</code><
                             </div>
                         </div>
                     </div>
+                </section>
+
+                <!-- Multimedia -->
+                <section id="multimedia" class="content-section">
+                    <h2><i class="fas fa-photo-video"></i> HTML Multimedia</h2>
                     
-                    <div class="note-box">
-                        <h4><i class="fas fa-lightbulb"></i> Performance Implications</h4>
-                        <ul>
-                            <li><strong>Minimize DOM size:</strong> Fewer elements = faster rendering</li>
-                            <li><strong>CSS at the top:</strong> Load CSS early to avoid repaints</li>
-                            <li><strong>JavaScript at the bottom:</strong> Or use <code>async</code>/<code>defer</code></li>
-                            <li><strong>Avoid layout thrashing:</strong> Multiple reads/writes to DOM cause reflows</li>
-                            <li><strong>Use efficient selectors:</strong> CSS selector performance matters</li>
-                        </ul>
+                    <div class="definition">
+                        <h4><i class="fas fa-book"></i> What is Multimedia in HTML?</h4>
+                        <p><strong>HTML Multimedia</strong> refers to integrating various media types like images, audio, video, and vector graphics into web pages. HTML5 introduced native support for audio and video without requiring plugins like Flash.</p>
+                    </div>
+                    
+                    <h3>Images</h3>
+                    
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span>image-examples.html</span>
+                            <button onclick="copyCode('code6')">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="code-body">
+                            <pre id="code6"><code><span class="comment">&lt;!-- Basic image --&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"Description of photo"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- Responsive image with srcset --&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"image-small.jpg"</span>
+     <span class="attr">srcset</span>=<span class="value">"image-small.jpg 480w,
+             image-medium.jpg 800w,
+             image-large.jpg 1200w"</span>
+     <span class="attr">sizes</span>=<span class="value">"(max-width: 600px) 480px,
+            (max-width: 1000px) 800px,
+            1200px"</span>
+     <span class="attr">alt</span>=<span class="value">"Responsive image"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- Figure with caption --&gt;</span>
+<span class="tag">&lt;figure&gt;</span>
+    <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"chart.png"</span> <span class="attr">alt</span>=<span class="value">"Sales chart for 2023"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;figcaption&gt;</span>Figure 1: Quarterly sales data for 2023<span class="tag">&lt;/figcaption&gt;</span>
+<span class="tag">&lt;/figure&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    
+                    <h3>Audio & Video</h3>
+                    
+                    <div class="media-demo">
+                        <div class="media-item">
+                            <h4>Audio Player</h4>
+                            <audio controls style="width: 100%; margin: 10px 0;">
+                                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <p>HTML5 audio player with controls.</p>
+                        </div>
+                        
+                        <div class="media-item">
+                            <h4>Video Player</h4>
+                            <video controls style="width: 100%; margin: 10px 0;" poster="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80">
+                                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <p>HTML5 video player with poster image.</p>
+                        </div>
+                        
+                        <div class="media-item">
+                            <h4>SVG Graphics</h4>
+                            <svg width="200" height="200" style="margin: 10px 0;">
+                                <rect x="50" y="50" width="100" height="100" fill="#3a86ff" opacity="0.7" />
+                                <circle cx="100" cy="100" r="40" fill="#ff006e" opacity="0.7" />
+                                <text x="100" y="190" text-anchor="middle" fill="#333" font-family="Arial" font-size="14">SVG Example</text>
+                            </svg>
+                            <p>Scalable Vector Graphics (SVG) example.</p>
+                        </div>
+                        
+                        <div class="media-item">
+                            <h4>Canvas</h4>
+                            <canvas id="demoCanvas" width="200" height="200" style="border: 1px solid #ddd; margin: 10px 0;"></canvas>
+                            <p>HTML Canvas for dynamic graphics.</p>
+                        </div>
                     </div>
                 </section>
             </main>
+
+            <!-- Right Sidebar - Quick Reference -->
+            <aside class="quick-ref">
+                <div class="ref-item">
+                    <h4><i class="fas fa-bolt"></i> Quick Tips</h4>
+                    <p>Always include <code>&lt;!DOCTYPE html&gt;</code> as the first line.</p>
+                    <p>Use semantic elements for better accessibility.</p>
+                    <p>Close all tags properly to avoid rendering issues.</p>
+                </div>
+                
+                <div class="ref-item">
+                    <h4><i class="fas fa-code"></i> Essential Tags</h4>
+                    <div class="tag-list">
+                        <span class="tag-badge">&lt;html&gt;</span>
+                        <span class="tag-badge">&lt;head&gt;</span>
+                        <span class="tag-badge">&lt;body&gt;</span>
+                        <span class="tag-badge">&lt;div&gt;</span>
+                        <span class="tag-badge">&lt;p&gt;</span>
+                        <span class="tag-badge">&lt;a&gt;</span>
+                        <span class="tag-badge">&lt;img&gt;</span>
+                        <span class="tag-badge">&lt;ul&gt;</span>
+                        <span class="tag-badge">&lt;li&gt;</span>
+                        <span class="tag-badge">&lt;h1&gt;</span>
+                        <span class="tag-badge">&lt;span&gt;</span>
+                    </div>
+                </div>
+                
+                <div class="ref-item">
+                    <h4><i class="fas fa-tags"></i> HTML5 Semantic</h4>
+                    <div class="tag-list">
+                        <span class="tag-badge">&lt;header&gt;</span>
+                        <span class="tag-badge">&lt;nav&gt;</span>
+                        <span class="tag-badge">&lt;main&gt;</span>
+                        <span class="tag-badge">&lt;article&gt;</span>
+                        <span class="tag-badge">&lt;section&gt;</span>
+                        <span class="tag-badge">&lt;aside&gt;</span>
+                        <span class="tag-badge">&lt;footer&gt;</span>
+                        <span class="tag-badge">&lt;figure&gt;</span>
+                        <span class="tag-badge">&lt;figcaption&gt;</span>
+                    </div>
+                </div>
+                
+                <div class="ref-item">
+                    <h4><i class="fas fa-edit"></i> Form Elements</h4>
+                    <div class="tag-list">
+                        <span class="tag-badge">&lt;form&gt;</span>
+                        <span class="tag-badge">&lt;input&gt;</span>
+                        <span class="tag-badge">&lt;textarea&gt;</span>
+                        <span class="tag-badge">&lt;select&gt;</span>
+                        <span class="tag-badge">&lt;option&gt;</span>
+                        <span class="tag-badge">&lt;button&gt;</span>
+                        <span class="tag-badge">&lt;label&gt;</span>
+                    </div>
+                </div>
+                
+                <div class="ref-item">
+                    <h4><i class="fas fa-photo-video"></i> Media Elements</h4>
+                    <div class="tag-list">
+                        <span class="tag-badge">&lt;img&gt;</span>
+                        <span class="tag-badge">&lt;video&gt;</span>
+                        <span class="tag-badge">&lt;audio&gt;</span>
+                        <span class="tag-badge">&lt;source&gt;</span>
+                        <span class="tag-badge">&lt;canvas&gt;</span>
+                        <span class="tag-badge">&lt;svg&gt;</span>
+                    </div>
+                </div>
+                
+                <div class="ref-item">
+                    <h4><i class="fas fa-table"></i> Table Elements</h4>
+                    <div class="tag-list">
+                        <span class="tag-badge">&lt;table&gt;</span>
+                        <span class="tag-badge">&lt;thead&gt;</span>
+                        <span class="tag-badge">&lt;tbody&gt;</span>
+                        <span class="tag-badge">&lt;tfoot&gt;</span>
+                        <span class="tag-badge">&lt;tr&gt;</span>
+                        <span class="tag-badge">&lt;th&gt;</span>
+                        <span class="tag-badge">&lt;td&gt;</span>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 
@@ -1820,22 +2287,22 @@ customElements.define(<span class="value">'user-card'</span>, UserCard);</code><
                 <div class="footer-column">
                     <h4>Learning Path</h4>
                     <ul>
+                        <li><a href="#html-intro">HTML Basics</a></li>
+                        <li><a href="#element-types">Element Types</a></li>
                         <li><a href="#semantic">Semantic HTML</a></li>
-                        <li><a href="#forms">HTML Forms</a></li>
-                        <li><a href="#multimedia">Multimedia</a></li>
-                        <li><a href="#advanced">Advanced Concepts</a></li>
-                        <li><a href="#animation">Browser Animation</a></li>
+                        <li><a href="#dom">DOM Concepts</a></li>
+                        <li><a href="#events">Event System</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-column">
                     <h4>Advanced Topics</h4>
                     <ul>
-                        <li><a href="#web-components">Web Components</a></li>
-                        <li><a href="#accessibility">Accessibility</a></li>
-                        <li><a href="#seo">SEO Best Practices</a></li>
-                        <li><a href="#performance">Performance</a></li>
-                        <li><a href="#best-practices">Best Practices</a></li>
+                        <li><a href="#multimedia">Multimedia</a></li>
+                        <li><a href="#">Web Components</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                        <li><a href="#">SEO Best Practices</a></li>
+                        <li><a href="#">Performance Optimization</a></li>
                     </ul>
                 </div>
                 
@@ -1875,6 +2342,29 @@ customElements.define(<span class="value">'user-card'</span>, UserCard);</code><
                 nav.style.gap = '15px';
             }
         });
+
+        // Run code examples
+        function runCode(demoId) {
+            const outputDiv = document.getElementById(demoId + '-output');
+            if (demoId === 'demo1') {
+                outputDiv.innerHTML = `
+                    <h1 style="color: #3a86ff; margin-top: 0;">Welcome to HTML!</h1>
+                    <p style="color: #333;">This is a paragraph.</p>
+                    <p style="color: #333;">This is another paragraph.</p>
+                `;
+            } else if (demoId === 'demo2') {
+                outputDiv.innerHTML = `
+                    <div style="background: lightblue; padding: 15px; margin-bottom: 10px;">Block Element 1</div>
+                    <p style="background: lightgreen; padding: 15px; margin-bottom: 10px;">Block Element 2</p>
+                    <div>
+                        <span style="background: lightcoral; padding: 8px;">Inline 1</span>
+                        <a href="#" style="background: lightyellow; padding: 8px; margin-left: 5px;">Inline 2</a>
+                        <strong style="background: lightpink; padding: 8px; margin-left: 5px;">Inline 3</strong>
+                        are all in the same line.
+                    </div>
+                `;
+            }
+        }
 
         // Form handling
         function handleFormSubmit() {
@@ -1943,6 +2433,52 @@ customElements.define(<span class="value">'user-card'</span>, UserCard);</code><
             ctx.fillStyle = '#333';
             ctx.font = '14px Arial';
             ctx.fillText('Canvas Demo', 60, 200);
+        }
+
+        // Event bubbling demo
+        function runBubblingDemo() {
+            const log = document.getElementById('event-log');
+            log.innerHTML = 'Click on any element to see event bubbling...<br><br>';
+            
+            // Clear existing event listeners
+            const grandparent = document.getElementById('grandparent');
+            const parent = document.getElementById('parent');
+            const child = document.getElementById('child');
+            
+            // Remove old listeners
+            grandparent.replaceWith(grandparent.cloneNode(true));
+            parent.replaceWith(parent.cloneNode(true));
+            child.replaceWith(child.cloneNode(true));
+            
+            // Get fresh references
+            const newGrandparent = document.getElementById('grandparent');
+            const newParent = document.getElementById('parent');
+            const newChild = document.getElementById('child');
+            
+            // Add event listeners with capturing (true) for some, bubbling (false) for others
+            newGrandparent.addEventListener('click', function(e) {
+                log.innerHTML += `<span style="color: blue;">Grandparent clicked (bubbling phase)</span><br>`;
+            }, false); // false = bubbling phase (default)
+            
+            newParent.addEventListener('click', function(e) {
+                log.innerHTML += `<span style="color: green;">Parent clicked (capturing phase)</span><br>`;
+            }, true); // true = capturing phase
+            
+            newChild.addEventListener('click', function(e) {
+                log.innerHTML += `<span style="color: red;">Child clicked (target phase)</span><br>`;
+                // Uncomment to stop propagation
+                // e.stopPropagation();
+            });
+            
+            // Add another parent listener for bubbling
+            newParent.addEventListener('click', function(e) {
+                log.innerHTML += `<span style="color: darkgreen;">Parent clicked (bubbling phase)</span><br>`;
+            }, false);
+            
+            // Add another grandparent listener for capturing
+            newGrandparent.addEventListener('click', function(e) {
+                log.innerHTML += `<span style="color: darkblue;">Grandparent clicked (capturing phase)</span><br>`;
+            }, true);
         }
 
         // Browser animation
@@ -2082,57 +2618,6 @@ customElements.define(<span class="value">'user-card'</span>, UserCard);</code><
             });
         }
 
-        // Run semantic demo
-        function runSemanticDemo() {
-            const output = document.getElementById('semantic-output');
-            output.innerHTML = `
-                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 250px; background: #f0f0f0; padding: 15px; border-radius: 8px;">
-                        <h5 style="color: #d32f2f;">Non-Semantic Output</h5>
-                        <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
-                            <div style="font-weight: bold;">My Site</div>
-                        </div>
-                        <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
-                            <div>Menu items...</div>
-                        </div>
-                        <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
-                            <div style="font-weight: bold;">Post Title</div>
-                            <div>Post content...</div>
-                        </div>
-                        <div style="background: white; padding: 15px; border-radius: 5px;">
-                            <div>Copyright info...</div>
-                        </div>
-                    </div>
-                    
-                    <div style="flex: 1; min-width: 250px; background: #e8f5e9; padding: 15px; border-radius: 8px;">
-                        <h5 style="color: #388e3c;">Semantic Output</h5>
-                        <header style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px; border-left: 4px solid #3a86ff;">
-                            <h1 style="margin: 0;">My Site</h1>
-                        </header>
-                        <nav style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px; border-left: 4px solid #ff006e;">
-                            <ul style="margin: 0; padding-left: 20px;">
-                                <li>Home</li>
-                                <li>About</li>
-                                <li>Contact</li>
-                            </ul>
-                        </nav>
-                        <main style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 10px; border-left: 4px solid #ffd166;">
-                            <article>
-                                <h2 style="margin-top: 0;">Post Title</h2>
-                                <p>Post content with <strong>semantic meaning</strong>.</p>
-                            </article>
-                        </main>
-                        <footer style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #06d6a0;">
-                            <p style="margin: 0;">Copyright © 2023</p>
-                        </footer>
-                    </div>
-                </div>
-                <p style="margin-top: 15px; font-weight: 500; color: #388e3c;">
-                    ✓ Semantic HTML clearly communicates structure to browsers, screen readers, and search engines.
-                </p>
-            `;
-        }
-
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -2176,7 +2661,9 @@ customElements.define(<span class="value">'user-card'</span>, UserCard);</code><
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            runSemanticDemo();
+            runCode('demo1');
+            runCode('demo2');
+            runBubblingDemo();
         });
     </script>
 </body>
